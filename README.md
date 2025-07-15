@@ -10,7 +10,6 @@
 * [Getting Started](#getting-started)
 * [Project Structure](#project-structure)
 * [License](#license)
-* [Acknowledgements](#acknowledgements)
 
 ## Overview
 
@@ -61,14 +60,56 @@ To replicate the experiments or build upon this work:
 
    * Open and execute the `dl-stock-prediction (1).ipynb` notebook to train and evaluate the models.
 
+4. **Run Models and Pipelines via Python Scripts**:
+
+   * You can run data download, preprocessing, feature engineering, model training, and evaluation directly from the modular Python scripts in the `src/` directory. Example usage:
+
+   ```bash
+   # Download data
+   python src/data/fetch_data.py
+
+   # Preprocess data
+   python src/data/preprocess.py
+
+   # Train models (CNN-LSTM, GRU, etc.)
+   python src/models/train.py
+
+   # Evaluate models
+   python src/evaluation/evaluate.py
+   ```
+
+   * You may need to adapt the scripts or create a main pipeline script to orchestrate the workflow. See docstrings and comments in each module for details.
+
 ## Project Structure
 
-```
+```text
 UK-stock-DL/
-├── dl-stock-prediction (1).ipynb  # Jupyter notebook containing model implementations and experiments
-├── requirements.txt               # List of required Python packages
-├── LICENSE                        # Project license (Apache-2.0)
-└── README.md                      # Project documentation
+├── data/
+│   ├── raw/                 # Raw downloaded data
+│   ├── processed/           # Cleaned and feature-engineered data
+│   └── external/            # External datasets
+├── notebooks/
+│   └── dl-stock-prediction.ipynb  # Jupyter notebook for EDA and experiments
+├── src/
+│   ├── __init__.py
+│   ├── data/
+│   │   ├── fetch_data.py    # Download data from yfinance
+│   │   ├── preprocess.py    # Clean and process data, calculate indicators
+│   ├── features/
+│   │   └── technical_indicators.py # Feature engineering functions
+│   ├── models/
+│   │   ├── base_model.py    # Base model class
+│   │   ├── model_cl.py      # CNN-LSTM model
+│   │   ├── model_gru.py     # GRU model
+│   │   └── train.py         # Training pipeline
+│   ├── evaluation/
+│   │   └── evaluate.py      # Evaluation & metrics
+│   ├── utils/
+│   │   └── helpers.py       # Utility scripts
+│   └── plots/               # Plotting scripts (optional)
+├── requirements.txt         # Python dependencies
+├── LICENSE                  # Project license (Apache-2.0)
+├── README.md                # Project documentation
 ```
 
 ## License
