@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-from src.features.technical_indicators import *
+from ..features.technical_indicators import *
 
 def preprocess_data(data, window_size=14):
     # Typical price
