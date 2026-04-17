@@ -33,6 +33,11 @@ def normalize_data(data):
     scaled_data = pd.DataFrame(scaled_data, columns=data.columns)
     return scaled_data, scaler
 
+def unscale_data(scaled_value, scaler, col_idx=0):
+    """Individually unscale a specific column (default is Close price at index 0)."""
+    unscaled_value = scaled_value * (scaler.data_max_[col_idx] - scaler.data_min_[col_idx]) + (scaler.data_min_[col_idx])
+    return unscaled_value
+
 def lag_data(data:pd.DataFrame, seq_length=10, lookahead=1):
     X_data, y_data = [],[]
     for i in range(len(data) - lookahead - seq_length + 1):

@@ -13,28 +13,36 @@ def rsi(close, periods=10, ema=True):
         ma_down = down.rolling(window=periods, adjust=False).mean()
     rsi = ma_up / ma_down
     rsi = 100 - (100/(1 + rsi))
-    return rsi
+    return rsi.squeeze()
 
 def roc(close, n):
     N = close.diff(n)
     D = close.shift(n)
-    roc = pd.Series(N/D, name='Rate of Change')
-    return roc
+    roc_val = N / D
+    if isinstance(roc_val, pd.DataFrame):
+        roc_val = roc_val.squeeze()
+    roc_series = pd.Series(roc_val, name='Rate of Change')
+    return roc_series
 
 def atr(high, low, close, window_size=14):
-    high_low = high - low
-    high_close = np.abs(high - close.shift())
-    low_close = np.abs(low - close.shift())
+    high_low = (high - low).squeeze()
+    high_close = np.abs(high - close.shift()).squeeze()
+    low_close = np.abs(low - close.shift()).squeeze()
     ranges = pd.concat([high_low, high_close, low_close], axis=1)
     true_range = np.max(ranges, axis=1)
     return true_range.rolling(window_size).mean()
 
 def cci(ma, tp, ndays):
+    ma = ma.squeeze()
+    tp = tp.squeeze()
     MAD = tp.rolling(ndays).apply(lambda x: (pd.Series(x) - pd.Series(x).mean()).abs().mean())
-    cci = (tp - ma) / (0.015 * MAD)
-    return cci
+    cci_val = (tp - ma) / (0.015 * MAD)
+    return cci_val
 
 def get_adx(high, low, close, atr, lookback):
+    high = high.squeeze()
+    low = low.squeeze()
+    atr = atr.squeeze()
     plus_dm = high.diff()
     minus_dm = low.diff()
     plus_dm[plus_dm < 0] = 0
@@ -47,18 +55,24 @@ def get_adx(high, low, close, atr, lookback):
     return plus_di, minus_di, adx_smooth
 
 def AO(close):
+    close = close.squeeze()
     sma5 = close.rolling(5).mean()
     sma34 = close.rolling(34).mean()
     ao = sma5 - sma34
     return ao
 
 def wil_r(high, low, close, lookback):
+    high = high.squeeze()
+    low = low.squeeze()
+    close = close.squeeze()
     highh = high.rolling(lookback).max()
     lowl = low.rolling(lookback).min()
     wr = -100 * ((highh - close) / (highh - lowl))
     return wr
 
 def obv(close, volume):
+    close = close.squeeze().values
+    volume = volume.squeeze().values
     obv_series = [0]
     for i in range(1, len(close)):
         if close[i] > close[i-1]:
