@@ -8,26 +8,33 @@ UK-stock-DL/
 │   ├── __init__.py
 │   ├── data/                # Data loading & preprocessing scripts
 │   │   ├── __init__.py
-│   │   ├── fetch_data.py    # Download data from yfinance
-│   │   ├── preprocess.py    # Clean and process data, calculate indicators
+│   │   ├── README.md
+│   │   ├── fetch_data.py    # Download data from yfinance & fetch news
+│   │   ├── preprocess.py    # Clean and process data, technical indicators & sentiment merge
 │   ├── features/            # Feature engineering
 │   │   ├── __init__.py
-│   │   └── technical_indicators.py
+│   │   ├── README.md
+│   │   ├── technical_indicators.py
+│   │   └── sentiment.py     # News sentiment analysis using VADER
 │   ├── models/              # Model definitions & training scripts
 │   │   ├── __init__.py
+│   │   ├── README.md
 │   │   ├── base_model.py    # Base model class
 │   │   ├── model_cl.py      # CNN-LSTM model
+│   │   ├── model_gan.py     # GAN model (Generator & Discriminator)
 │   │   ├── model_gru.py     # GRU model
-│   │   └── train.py         # Training pipeline
+│   │   ├── model_var.py     # VAR model
+│   │   └── train.py         # Data splitting utility
 │   ├── evaluation/          # Evaluation & metrics
 │   │   ├── __init__.py
+│   │   ├── README.md
 │   │   └── evaluate.py
 │   └── utils/               # Utility scripts
 │       ├── __init__.py
-│       └── helpers.py
-├── experiments/             # For keeping experiment logs, configs, results
-├── configs/                 # YAML/JSON configs for models, training, etc.
+│       ├── README.md
+│       ├── helpers.py
+│       └── plotting.py
 ├── requirements.txt         # Python dependencies
 ├── README.md                # Project overview and instructions
 ├── .gitignore
-└── setup.py                 # For pip-installable package
+└── LICENSE
