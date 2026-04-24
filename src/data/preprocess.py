@@ -3,18 +3,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from ..features.technical_indicators import *
 
-def preprocess_data(data, window_size=14, sentiment_df=None):
-    """
-    Preprocess stock data and integrate sentiment scores if provided.
-
-    Args:
-        data (pd.DataFrame): Raw stock data.
-        window_size (int): Lookback window for technical indicators.
-        sentiment_df (pd.DataFrame, optional): Sentiment scores by date.
-
-    Returns:
-        pd.DataFrame: Preprocessed data with features.
-    """
+def preprocess_data(data, window_size=14):
     # Typical price
     data['TP'] = (data['Close'] + data['Low'] + data['High'])/3
     # Moving averages
@@ -35,27 +24,13 @@ def preprocess_data(data, window_size=14, sentiment_df=None):
     data['AO'] = AO(data.Close)
     data['WIL_R'] = wil_r(data.High, data.Low, data.Close, 14)
     data['OBV'] = obv(data.Close, data.Volume)
-
-    # Merge sentiment data if available
-    if sentiment_df is not None and not sentiment_df.empty:
-        # Ensure index is datetime for merging
-        if not isinstance(data.index, pd.DatetimeIndex):
-            data.index = pd.to_datetime(data.index)
-
-        data = data.merge(sentiment_df, left_index=True, right_on='Date', how='left')
-        data.set_index('Date', inplace=True)
-        # Fill missing sentiment with 0 (neutral)
-        data['Sentiment'] = data['Sentiment'].fillna(0)
-    else:
-        data['Sentiment'] = 0
-
     data = data.dropna()
     return data
 
 def normalize_data(data):
     scaler = MinMaxScaler()
     scaled_data = scaler.fit_transform(data)
-    scaled_data = pd.DataFrame(scaled_data, columns=data.columns, index=data.index)
+    scaled_data = pd.DataFrame(scaled_data, columns=data.columns)
     return scaled_data, scaler
 
 def unscale_data(scaled_value, scaler, col_idx=0):
@@ -65,15 +40,10 @@ def unscale_data(scaled_value, scaler, col_idx=0):
 
 def lag_data(data:pd.DataFrame, seq_length=10, lookahead=1):
     X_data, y_data = [],[]
-    # Use integer indexing to avoid issues with potential index gaps
-    data_values = data.values
-    close_idx = data.columns.get_loc('Close')
-
     for i in range(len(data) - lookahead - seq_length + 1):
-        seq = data_values[i : i+seq_length]
-        y = data_values[i+seq_length : i+seq_length+lookahead, close_idx]
+        seq = data.loc[i : i+seq_length-1]
+        y = data.Close.loc[i+seq_length: i+seq_length+lookahead-1]
         X_data.append(seq); y_data.append(y)
-
     X_data = np.array(X_data)
     y_data = np.array(y_data)
     return X_data, y_data
